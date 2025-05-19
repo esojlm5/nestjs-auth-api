@@ -7,6 +7,7 @@ WORKDIR /app
 # Install OpenSSL and other necessary dependencies
 RUN apt-get update -y && \
     apt-get install -y openssl && \
+    apt-get update && apt-get install -y ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
 # Force install specific yarn version and verify
@@ -37,4 +38,4 @@ FROM base as production
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 RUN yarn build
-CMD ["/app/start.sh", "yarn", "start:prod"] 
+CMD ["/app/start.sh", "yarn", "start:dev"] 
