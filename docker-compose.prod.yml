@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiMWQ4MzAyOTMtYWJjMi00NGQ5LTlmMDAtYjRlZTg0YjU1OWM3IiwidGVuYW50X2lkIjoiYzJkZTI2ZTIyZDRjNmQzMzU1MzhkZTUyZDljM2UxZTk5ZWYzOGMyMWE1MDVlYjhjOTQyMzdkYjNjNTg0NWNiNCIsImludGVybmFsX3NlY3JldCI6ImI4MjQ5Mjc1LTRmMmItNGE2Ny04OTI3LTZkOTg2ODE4OTcxNiJ9.SidLFv8Nng_oBsiZCNe5BKu2ZTWcHU5FjQbnWaOpeBA
+    restart: unless-stopped
+    command: sh -c "yarn prisma db push && yarn start:prod"
+
+volumes:
+  postgres_data:
+    driver: local
+
+x-bake:
+  platforms:
+    - linux/amd64 

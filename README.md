@@ -96,3 +96,124 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+# NestJS Auth API
+
+## Docker Commands
+
+### Development Environment
+
+Start the development environment with hot-reload:
+```bash
+# Start all services (app, database, and Prisma Studio)
+docker compose -f docker-compose.dev.yml up
+
+# Start in detached mode (background)
+docker compose -f docker-compose.dev.yml up -d
+
+# View logs
+docker compose -f docker-compose.dev.yml logs -f
+
+# Stop all services
+docker compose -f docker-compose.dev.yml down
+
+# Stop and remove volumes (clean database)
+docker compose -f docker-compose.dev.yml down -v
+
+# Rebuild containers
+docker compose -f docker-compose.dev.yml up --build
+```
+
+### Production Environment
+
+Start the production environment:
+```bash
+# Start production services
+docker compose -f docker-compose.prod.yml up
+
+# Start in detached mode
+docker compose -f docker-compose.prod.yml up -d
+
+# View logs
+docker compose -f docker-compose.prod.yml logs -f
+
+# Stop services
+docker compose -f docker-compose.prod.yml down
+```
+
+### Prisma Studio
+
+Prisma Studio is included as a service in the development environment. You can:
+
+1. Access Prisma Studio through the browser:
+```
+http://localhost:5555
+```
+
+2. Start only Prisma Studio:
+```bash
+docker compose -f docker-compose.dev.yml up prisma-studio
+```
+
+### Database Management
+
+The PostgreSQL database runs on port 5432. You can connect to it using:
+- Host: localhost
+- Port: 5432
+- Database: nestjs_auth
+- Username: postgres
+- Password: postgres (as defined in .env.development)
+
+### Environment Files
+
+- `.env.development` - Development environment variables
+- `.env.production` - Production environment variables
+
+Make sure to create these files with the appropriate configuration before starting the containers.
+
+### Common Issues
+
+1. **Database Connection Issues**
+   - Ensure the database is running: `docker compose -f docker-compose.dev.yml ps`
+   - Check database logs: `docker compose -f docker-compose.dev.yml logs db`
+
+2. **Port Conflicts**
+   - App runs on port 3000
+   - Database runs on port 5432
+   - Prisma Studio runs on port 5555
+   - Make sure these ports are available on your machine
+
+3. **Container Rebuild**
+   If you make changes to the Dockerfile or dependencies:
+   ```bash
+   docker compose -f docker-compose.dev.yml up --build
+   ```
+
+### Development Workflow
+
+1. Start the development environment:
+   ```bash
+   docker compose -f docker-compose.dev.yml up
+   ```
+
+2. Access the application:
+   - API: http://localhost:3000
+   - Prisma Studio: http://localhost:5555
+
+3. Make changes to your code - the application will automatically reload
+
+4. To stop the environment:
+   ```bash
+   docker compose -f docker-compose.dev.yml down
+   ```
+
+### Production Deployment
+
+1. Build and start production services:
+   ```bash
+   docker compose -f docker-compose.prod.yml up --build
+   ```
+
+2. The application will be available at http://localhost:3000
+
+Note: Make sure to set appropriate environment variables in `.env.production` before deploying to production.

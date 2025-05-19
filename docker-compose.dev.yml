@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "${PORT:-3000}:3000"
+    env_file:
+      - .env.development.local
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.yarn
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh -c "yarn prisma migrate deploy && yarn start:dev"
+
+  prisma-studio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "5555:5555"
+    env_file:
+      - .env.development.local
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.yarn
+    depends_on:
+      db:
+        condition: service_healthy
+    command: yarn prisma studio --port 5555
+
+  db:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env.development.local
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local 
