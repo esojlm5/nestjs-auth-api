@@ -1,7 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
+import { UsersService } from 'src/users/users.service';
+
+interface UserWithIsAdmin extends User {
+  isAdmin: boolean;
+}
 
 @Injectable()
 export class AuthService {
@@ -16,13 +21,18 @@ export class AuthService {
   }
 
   async login(email: string, password: string) {
-    const user = await this.usersService.findByEmail(email);
+    const user = (await this.usersService.findByEmail(
+      email,
+    )) as UserWithIsAdmin;
     if (!user || !(await compare(password, user?.password))) {
       throw new UnauthorizedException('Invalid Credentials');
     }
 
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email: user.email, isAdmin: user.isAdmin };
+    console.log('Login - User from DB:', user);
+    console.log('Login - JWT Payload being created:', payload);
     const token = this.jwtService.sign(payload);
+    console.log('Login - Decoded token:', this.jwtService.decode(token));
 
     return { acces_token: token };
   }
