@@ -28,7 +28,7 @@ export class UsersController {
   updateUser(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
-    @Request() req: { user: JwtUser },
+    @Request() req: { user: User },
   ) {
     console.log('Request user object:', req.user);
     return this.usersService.updateUser(id, updateUserDto, req.user);

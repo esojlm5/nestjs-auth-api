@@ -1,30 +1,22 @@
-# Use Node.js LTS version
+# Base stage
 FROM node:20-slim as base
-
-# Set working directory
 WORKDIR /app
 
-# Install OpenSSL and other necessary dependencies
 RUN apt-get update -y && \
-  apt-get install -y openssl procps && \
-  apt-get update && apt-get install -y ca-certificates && \
+  apt-get install -y openssl procps ca-certificates && \
   rm -rf /var/lib/apt/lists/*
 
-# Force install specific yarn version and verify
 RUN rm -rf /usr/local/bin/yarn && \
   npm install -g yarn@1.22.19 --force && \
   yarn --version
 
-# Copy package.json and yarn.lock
 COPY package.json yarn.lock ./
-
-# Install dependencies
 RUN yarn install --frozen-lockfile
 
-# Copy the rest of the application
 COPY . .
+COPY start.sh /app/
+RUN chmod +x /app/start.sh
 
-# Generate Prisma client
 RUN yarn prisma generate
 
 # Development stage
@@ -37,5 +29,5 @@ CMD ["/app/start.sh", "yarn", "start:dev"]
 FROM base as production
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
-RUN yarn build
-CMD ["/app/start.sh", "yarn", "start:dev"] 
+RUN yarn build && yarn install --production --frozen-lockfile
+CMD ["/app/start.sh", "yarn", "start"]
