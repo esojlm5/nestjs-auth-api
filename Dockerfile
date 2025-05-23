@@ -6,14 +6,14 @@ WORKDIR /app
 
 # Install OpenSSL and other necessary dependencies
 RUN apt-get update -y && \
-    apt-get install -y openssl && \
-    apt-get update && apt-get install -y ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
+  apt-get install -y openssl procps && \
+  apt-get update && apt-get install -y ca-certificates && \
+  rm -rf /var/lib/apt/lists/*
 
 # Force install specific yarn version and verify
 RUN rm -rf /usr/local/bin/yarn && \
-    npm install -g yarn@1.22.19 --force && \
-    yarn --version
+  npm install -g yarn@1.22.19 --force && \
+  yarn --version
 
 # Copy package.json and yarn.lock
 COPY package.json yarn.lock ./

@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   app:
@@ -53,4 +53,5 @@ services:
 
 volumes:
   postgres_data:
-    driver: local 
+    driver: local
+
