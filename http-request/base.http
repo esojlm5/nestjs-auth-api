@@ -1,0 +1,48 @@
+# form-urlencoded type is recognized with `Content-Type` header
+
+### form-urlencoded
+POST https://ijhttp-examples.jetbrains.com/post
+Content-Type: application/x-www-form-urlencoded
+
+key1=value1&key2=value2&key3=value3&key4=value4&key5=value5
+
+### form-urlencoded (multiline)
+# you can put some whitespaces in urlencoded form
+# rest.nvim will recognize whitespaces and remove them before request
+POST https://ijhttp-examples.jetbrains.com/post
+Content-Type: application/x-www-form-urlencoded
+
+key1 = value1 &
+key2 = value2 &
+key3 = value3 &
+key4 = value4 &
+key5 = value5
+
+
+### json body
+# request body starting with `{\n` will have json syntax injection via tree-sitter
+# rest.nvim provides opt-out json validation feature
+POST https://example.com HTTP/1.1
+Content-Type: application/json
+
+{
+    "foo": 123
+}
+
+### xml body
+# request body starting with `<.*` will have xml syntax injection via tree-sitter
+# rest.nvim provides opt-out xml validation feature
+POST https://example.com HTTP/1.1
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<Request>
+  <Login>login</Login>
+  <Password>password</Password>
+</Request>
+
+### raw body
+# all other bodies will be treated as raw body type
+POST https://example.com HTTP/1.1
+
+Hello world!

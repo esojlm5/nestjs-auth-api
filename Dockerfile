@@ -14,8 +14,6 @@ COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
 COPY . .
-COPY start.sh /app/
-RUN chmod +x /app/start.sh
 
 RUN yarn prisma generate
 
@@ -23,11 +21,11 @@ RUN yarn prisma generate
 FROM base as development
 ARG NODE_ENV=development
 ENV NODE_ENV=${NODE_ENV}
-CMD ["/app/start.sh", "yarn", "start:dev"]
+CMD [, "yarn", "start:dev"]
 
 # Production stage
 FROM base as production
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 RUN yarn build && yarn install --production --frozen-lockfile
-CMD ["/app/start.sh", "yarn", "start"]
+CMD [, "yarn", "start"]
